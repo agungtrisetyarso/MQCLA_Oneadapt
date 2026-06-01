@@ -1,0 +1,50 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data from Table S1 (OneAdapt-optimized MBQCLA)
+n = np.array([8, 16, 32, 64, 128, 256])
+
+# MBQCLA with OneAdapt + pipeline (d=5)
+v_mbqcla_d5 = np.array([354000, 691625, 1331875, 2556750, 5114000, 10216000])
+
+# RCA baseline (d=5)
+v_rca_d5 = np.array([6400000, 25600000, 102400000, 409600000, 1638400000, 6553600000])
+
+# MBQCLA with OneAdapt + pipeline (d=11)
+v_mbqcla_d11 = np.array([3768480, 7359075, 14170150, 27203820, 54413760, 108798080])
+
+# RCA baseline (d=11)
+v_rca_d11 = np.array([68147200, 272588800, 1090355200, 4361420800, 17445683200, 69782732800])
+
+# ============== Plotting Fig. S1 ==============
+plt.figure(figsize=(10, 7))
+
+# Plot for d=5
+plt.loglog(n, v_mbqcla_d5, 'o-', linewidth=2.5, markersize=8, label='MBQCLA (OneAdapt)', color='#1f77b4')
+plt.loglog(n, v_rca_d5, 's--', linewidth=2.5, markersize=8, label='Ripple-Carry Adder (RCA)', color='#ff7f0e')
+
+# Plot for d=11
+plt.loglog(n, v_mbqcla_d11, 'o-', linewidth=2.5, markersize=8, label='MBQCLA (OneAdapt, d=11)', color='#2ca02c')
+plt.loglog(n, v_rca_d11, 's--', linewidth=2.5, markersize=8, label='RCA (d=11)', color='#d62728')
+
+plt.xlabel('Register size $n$', fontsize=14)
+plt.ylabel('Space-time volume $V_{FT}$', fontsize=14)
+plt.title('Fig. S1. Space-time volume scaling with OneAdapt optimization\n(log-log plot)', fontsize=15, pad=20)
+
+plt.grid(True, which="both", ls="--", alpha=0.7)
+plt.legend(fontsize=12)
+
+# Annotate the gap at n=256
+gap_d5 = v_rca_d5[-1] / v_mbqcla_d5[-1]
+plt.annotate(f'Gap at n=256:\n{gap_d5:.1f}×', 
+             xy=(256, v_mbqcla_d5[-1]), 
+             xytext=(180, v_mbqcla_d5[-1]*0.3),
+             arrowprops=dict(arrowstyle='->', color='red'),
+             fontsize=12, ha='center', bbox=dict(boxstyle="round,pad=0.3", facecolor="wheat"))
+
+plt.tight_layout()
+plt.show()
+
+# Optional: Save high-resolution figure
+plt.savefig('Fig_S1_SpaceTimeVolume_Scaling.png', dpi=300, bbox_inches='tight')
+print("Figure saved as 'Fig_S1_SpaceTimeVolume_Scaling.png'")
